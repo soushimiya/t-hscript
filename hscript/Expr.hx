@@ -150,6 +150,9 @@ EInvalidType(f:String);
 EDeclaration;
 EModuleUpper;
 EAliasUpper;
+ENoSuperCall;
+EUnknownClass(c:String);
+EParamLimit;
 ECustom(msg:String);
 } enum ModuleDecl
 {

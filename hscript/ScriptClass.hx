@@ -44,7 +44,7 @@ class ScriptClass
 			callFunction("new", args);
 			if (superClass == null && _c.extend != null)
 			{
-				@:privateAccess _interp.error(ECustom("super() not called"));
+				@:privateAccess _interp.error(ENoSuperCall);
 			}
 		}
 		else if (_c.extend != null)
@@ -103,7 +103,7 @@ class ScriptClass
 			var c = Type.resolveClass(extendString);
 			if (c == null)
 			{
-				@:privateAccess _interp.error(ECustom("could not resolve super class: " + extendString));
+				@:privateAccess _interp.error(EUnknownClass(extendString));
 			}
 			superClass = Type.createInstance(c, args);
 		}
@@ -322,7 +322,7 @@ class ScriptClass
 						case 2: return this.callFunction2.bind(name, _, _);
 						case 3: return this.callFunction3.bind(name, _, _, _);
 						case 4: return this.callFunction4.bind(name, _, _, _, _);
-						case _: @:privateAccess this._interp.error(ECustom("only 4 params allowed in script class functions (.bind limitation)"));
+						case _: @:privateAccess this._interp.error(EParamLimit);
 					}
 				}
 				else if (this.findVar(name) != null)

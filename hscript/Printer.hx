@@ -444,6 +444,9 @@ class Printer
 			case EModuleUpper: "Module name must start with an uppercase letter";
 			case EAliasUpper: "Type aliases must start with an uppercase letter";
 			case EDeclaration: "import and using may not appear after a declaration";
+			case ENoSuperCall: "super() not called in Script Class";
+			case EUnknownClass(c): "Unknown class: " + c;
+			case EParamLimit: "only 4 params allowed in Script Class functions (.bind limitation)";
 			case ECustom(msg): msg;
 		};
 		#if hscriptPos
