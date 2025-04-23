@@ -1193,7 +1193,11 @@ class Interp
 
 	function cnew(cl:String, args:Array<Dynamic>):Dynamic
 	{
-		if (_scriptClassDescriptors.exists(cl))
+		if (imports.exists(cl))
+		{
+			return Type.createInstance(imports.get(cl), args);
+		}
+		else if (_scriptClassDescriptors.exists(cl))
 		{
 			var proxy:ScriptClass = new ScriptClass(_scriptClassDescriptors.get(cl), args);
 			return proxy;
@@ -1208,12 +1212,6 @@ class Interp
 					var proxy:ScriptClass = new ScriptClass(_scriptClassDescriptors.get(packagedClass), args);
 					return proxy;
 				}
-			}
-
-			if (imports.exists(cl))
-			{
-				trace(cl);
-				return Type.createInstance(imports.get(cl), args);
 			}
 		}
 
