@@ -13,6 +13,9 @@ enum Param
 
 class ScriptClass
 {
+	// class => [key => data]
+	// public static var staticVariables:Map<String, Map<String, Dynamic>> = new Map<String, Map<String, Dynamic>>();
+
 	private var _c:ClassDecl;
 	private var _interp:Interp;
 
@@ -22,6 +25,17 @@ class ScriptClass
 	{
 		_c = c;
 		_interp = new Interp(this);
+		if (_c.imports != null)
+		{
+			for (cls => path in _c.imports)
+			{
+				var fullPath = path.join(".");
+				var c = Type.resolveClass(fullPath);
+				if (cls != null)
+					_interp.imports.set(cls, c);
+			}
+		}
+
 		buildCaches();
 
 		var ctorField = findField("new");
@@ -46,7 +60,7 @@ class ScriptClass
 		var name = "";
 		if (_c.pkg != null)
 		{
-			name += _c.pkg.join(".");
+			name += _c.pkg.join(".") + ".";
 		}
 		name += _c.name;
 		return name;

@@ -37,17 +37,11 @@ private enum Stop
 @:access(hscript.ScriptClass)
 class Interp
 {
-	#if haxe3
 	public var variables:Map<String, Dynamic>;
+	public var imports:Map<String, Class<Dynamic>>;
 
 	var locals:Map<String, {r:Dynamic}>;
 	var binops:Map<String, Expr->Expr->Dynamic>;
-	#else
-	public var variables:Hash<Dynamic>;
-
-	var locals:Hash<{r:Dynamic}>;
-	var binops:Hash<Expr->Expr->Dynamic>;
-	#end
 
 	var depth:Int;
 	var inTry:Bool;
@@ -77,11 +71,8 @@ class Interp
 
 	private function resetVariables()
 	{
-		#if haxe3
 		variables = new Map<String, Dynamic>();
-		#else
-		variables = new Hash();
-		#end
+		imports = new Map<String, Class<Dynamic>>();
 
 		variables.set("null", null);
 		variables.set("true", true);
@@ -94,9 +85,10 @@ class Interp
 				inf.customParams = el;
 			haxe.Log.trace(Std.string(v), inf);
 		}));
-		variables.set("Type", Type);
-		variables.set("Math", Math);
-		variables.set("Std", Std);
+
+		imports.set("Type", Type);
+		imports.set("Math", Math);
+		imports.set("Std", Std);
 	}
 
 	private static var _scriptClassDescriptors:Map<String, ClassDecl> = new Map<String, ClassDecl>();
@@ -484,6 +476,12 @@ class Interp
 		if (l != null)
 			return l.r;
 		var v = variables.get(id);
+		if (!variables.exists(id))
+		{
+			var i = imports.get(id);
+			if (i != null)
+				return i;
+		}
 		if (v == null && !variables.exists(id))
 		{
 			if (_proxy != null && _proxy.findFunction(id) != null)
@@ -935,7 +933,7 @@ class Interp
 							else
 								error(EInvalidType(importStuff[0]));
 						}
-						else variables.set(importStuff[0], importStuff[1]);
+						else imports.set(importStuff[0], importStuff[1]);
 
 					case IAsName(alias):
 						var importStuff = getImport();
@@ -946,7 +944,7 @@ class Interp
 							else
 								error(EInvalidType(importStuff[0]));
 						}
-						else variables.set(alias, importStuff[1]);
+						else imports.set(alias, importStuff[1]);
 				}
 				return null;
 		}
