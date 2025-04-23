@@ -1210,20 +1210,10 @@ class Interp
 				}
 			}
 
-			if (_proxy._c.imports != null && _proxy._c.imports.exists(cl))
+			if (imports.exists(cl))
 			{
-				var importedClass = _proxy._c.imports.get(cl).join(".");
-				if (_scriptClassDescriptors.exists(importedClass))
-				{
-					var proxy:ScriptClass = new ScriptClass(_scriptClassDescriptors.get(importedClass), args);
-					return proxy;
-				}
-
-				var c = Type.resolveClass(importedClass);
-				if (c != null)
-				{
-					return Type.createInstance(c, args);
-				}
+				trace(cl);
+				return Type.createInstance(imports.get(cl), args);
 			}
 		}
 
