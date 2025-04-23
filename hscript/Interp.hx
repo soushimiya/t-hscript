@@ -35,7 +35,6 @@ private enum Stop
 }
 
 @:access(hscript.ScriptClass)
-@:access(hscript.AbstractScriptClass)
 class Interp
 {
 	#if haxe3
@@ -59,10 +58,10 @@ class Interp
 	var curExpr:Expr;
 	#end
 
-	private var _proxy:AbstractScriptClass = null;
+	private var _proxy:ScriptClass = null;
 	private var _nextCallObject:Dynamic = null;
 
-	public function new(?proxy:AbstractScriptClass = null)
+	public function new(?proxy:ScriptClass = null)
 	{
 		#if haxe3
 		locals = new Map();
@@ -124,13 +123,13 @@ class Interp
 		registerModule(decls);
 	}
 
-	public function createScriptClassInstance(className:String, args:Array<Dynamic> = null):AbstractScriptClass
+	public function createScriptClassInstance(className:String, args:Array<Dynamic> = null):ScriptClass
 	{
 		if (args == null)
 		{
 			args = [];
 		}
-		var r:AbstractScriptClass = cnew(className, args);
+		var r:ScriptClass = cnew(className, args);
 		return r;
 	}
 
@@ -1094,7 +1093,7 @@ class Interp
 
 		if ((o is ScriptClass))
 		{
-			var proxy:AbstractScriptClass = cast(o, ScriptClass);
+			var proxy:ScriptClass = cast(o, ScriptClass);
 			if (proxy._interp.variables.exists(f))
 			{
 				return proxy._interp.variables.get(f);
@@ -1198,7 +1197,7 @@ class Interp
 	{
 		if (_scriptClassDescriptors.exists(cl))
 		{
-			var proxy:AbstractScriptClass = new ScriptClass(_scriptClassDescriptors.get(cl), args);
+			var proxy:ScriptClass = new ScriptClass(_scriptClassDescriptors.get(cl), args);
 			return proxy;
 		}
 		else if (_proxy != null)
@@ -1208,7 +1207,7 @@ class Interp
 				var packagedClass = _proxy._c.pkg.join(".") + "." + cl;
 				if (_scriptClassDescriptors.exists(packagedClass))
 				{
-					var proxy:AbstractScriptClass = new ScriptClass(_scriptClassDescriptors.get(packagedClass), args);
+					var proxy:ScriptClass = new ScriptClass(_scriptClassDescriptors.get(packagedClass), args);
 					return proxy;
 				}
 			}
@@ -1218,7 +1217,7 @@ class Interp
 				var importedClass = _proxy._c.imports.get(cl).join(".");
 				if (_scriptClassDescriptors.exists(importedClass))
 				{
-					var proxy:AbstractScriptClass = new ScriptClass(_scriptClassDescriptors.get(importedClass), args);
+					var proxy:ScriptClass = new ScriptClass(_scriptClassDescriptors.get(importedClass), args);
 					return proxy;
 				}
 
