@@ -108,11 +108,11 @@ class Interp
 		return _scriptClassDescriptors.get(name);
 	}
 
-	public function addModule(moduleContents:String)
+	public function addModule(moduleContents:String, ?type:Class<Dynamic>)
 	{
 		var parser = new Parser();
 		var decls = parser.parseModule(moduleContents);
-		registerModule(decls);
+		registerModule(decls, type);
 	}
 
 	public function createScriptClassInstance(className:String, args:Array<Dynamic> = null):ScriptClass
@@ -125,7 +125,7 @@ class Interp
 		return r;
 	}
 
-	public function registerModule(module:Array<ModuleDecl>)
+	public function registerModule(module:Array<ModuleDecl>, ?filterType:Class<Dynamic>)
 	{
 		var pkg:Array<String> = null;
 		var imports:Map<String, Array<String>> = [];
@@ -145,6 +145,10 @@ class Interp
 						var superClassPath = new Printer().typeToString(extend);
 						if (imports.exists(superClassPath))
 						{
+							// how
+							if (filterType == Type.resolveClass(imports.get(superClassPath).join(".")))
+								return;
+
 							switch (extend)
 							{
 								case CTPath(_, params):
